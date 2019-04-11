@@ -1,7 +1,9 @@
 import os
-basedir = os.path.abspath(os.path.dirname(__file__))
+BASEDIR = os.path.abspath(os.path.dirname(__file__))
 
-class Config:
+
+class Config(object):
+
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard to guess string'
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     FLASKY_MAIL_SUBJECT_PREFIX = '[Flasky]'
@@ -12,7 +14,9 @@ class Config:
     def init_app(app):
         pass
 
+
 class DevelopmentConfig(Config):
+
     DEBUG = True
     MAIL_SERVER = 'smtp.googlemail.com'
     MAIL_PORT = 587
@@ -20,17 +24,20 @@ class DevelopmentConfig(Config):
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     SLQALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
-        'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
+        'sqlite:///' + os.path.join(BASEDIR, 'data-dev.sqlite')
+
 
 class TestingConfig(Config):
     TESTING = True
     SLQALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL') or \
-        'sqlite:///' + os.path.join(basedir, 'data-test.sqlite')
+        'sqlite:///' + os.path.join(BASEDIR, 'data-test.sqlite')
+
 
 class ProductionConfig(Config):
     SLQALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        'sqlite:///' + os.path.join(basedir, 'data.sqlite')
-    
+        'sqlite:///' + os.path.join(BASEDIR, 'data.sqlite')
+
+
 config = {
     'development': DevelopmentConfig,
     'testing': TestingConfig,
