@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %} To do List {% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>Welcome to your to-do list</h1>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">description</th>
+                <th scope="col">email</th>
+                <th scope="col">priority</th>
+            </tr>
+        </thead>
+        {% for item in tasklist %}
+            <TR>
+                <td>{{item.description}}</td>
+                <td>{{item.email}}</td>
+                <td>{{item.priority}}</td>
+                <td></td>
+            </TR>
+        {% endfor %}
+        </table>
+
+        <form class="form form-horizontal" method="POST" role="todo_form" action="{{ url_for('submit') }}">
+                {{ todo_form.hidden_tag() }}
+                {{ wtf.form_errors(todo_form, hiddens="only") }}
+            
+                {{ wtf.form_field(todo_form.description) }}
+                {{ wtf.form_field(todo_form.email) }}
+                {{ wtf.form_field(todo_form.priority) }}
+                
+                {{ wtf.form_field(todo_form.submit) }}
+            </form>
+            <form class="form form-horizontal" method="POST" role="clear_form" action="{{ url_for('clear') }}">
+                    {{ clear_form.hidden_tag() }}
+                    {{ wtf.form_errors(clear_form, hiddens="only") }}
+            
+                    {{ wtf.form_field(clear_form.clear) }}    
+            </form>
+            <form class="form form-horizontal" method="POST" role="save_form" action="{{ url_for('save') }}">
+                    {{ save_form.hidden_tag() }}
+                    {{ wtf.form_errors(save_form, hiddens="only") }}
+            
+                    {{ wtf.form_field(save_form.save) }}
+            </form>
+            
+    </div>
+{% endblock %}
