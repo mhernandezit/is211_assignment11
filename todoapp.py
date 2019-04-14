@@ -129,6 +129,9 @@ def index():
 
 @app.route('/delete', methods=['POST'])
 def delete():
+    """ Delete route - deletes an individual task item when a delete
+    button clicked within the todo.html file.  Redirects back
+    to / when complete """
     tasklist.delete_item(request.form.get('delete_task'))
     tasklist.save_list()
     return redirect(url_for('index'))
