@@ -5,59 +5,63 @@
 
 {% block page_content %}
 <div class="page-header">
-    <h1>Welcome to your to-do list</h1>
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th scope="col">description</th>
-                <th scope="col">email</th>
-                <th scope="col">priority</th>
-            </tr>
-        </thead>
-        {% for item in tasklist %}
-            <TR>
-                <td>{{item.description}}</td>
-                <td>{{item.email}}</td>
-                <td>{{item.priority}}</td>
-                <td></td>
-            </TR>
-        {% endfor %}
-        </table>
-        <hr>
-    <table class="table">
-            <h4>Todo List Item Entry</h4> 
-        <tr>
-                <form class="form form-horizontal" method="POST" role="todo_form" action="{{ url_for('submit') }}">
-                        {{ todo_form.hidden_tag() }}
-                        {{ wtf.form_errors(todo_form, hiddens="only") }}
-                    
-                        {{ wtf.form_field(todo_form.description) }}
-                        {{ wtf.form_field(todo_form.email) }}
-                        {{ wtf.form_field(todo_form.priority) }}
-                        
-                        {{ wtf.form_field(todo_form.submit) }}
-                </form>
-        </tr>
-        <tr>
-                <form class="form form-horizontal" method="POST" role="clear_form" action="{{ url_for('clear') }}">
-                        {{ clear_form.hidden_tag() }}
-                        {{ wtf.form_errors(clear_form, hiddens="only") }}
-                        <div class="form-actions">
-                                <button name="action_clear" type="submit" class="btn btn-warning">Clear List</button>
-                        </div>    
-                </form>
-        </tr>
-        <tr>
-                <form class="form form-horizontal" method="POST" role="save_form" action="{{ url_for('save') }}">
-                        {{ save_form.hidden_tag() }}
-                        {{ wtf.form_errors(save_form, hiddens="only") }}
-                        <div class="form-actions">
-                                <button name="action_save" type="submit" class="btn btn-primary">Save Changes</button>
-                        </div>
-                </form>
+   <h1>Welcome to your to-do list</h1>
 
-        </tr>
-    </table>
-            
-    </div>
+   <table class="table table-hover">
+      <thead>
+         <tr>
+            <th scope="col">description</th>
+            <th scope="col">email</th>
+            <th scope="col">priority</th>
+         </tr>
+      </thead>
+
+      {% for item in tasklist %}
+      <TR>
+         <td>{{item.description}}</td>
+         <td>{{item.email}}</td>
+         <td>{{item.priority}}</td>
+         <td>
+            <form action="/delete" method=post>
+                <input type=hidden value="{{ item.description }}"name="delete_task">
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+         </td>
+      </TR>
+      {% endfor %}
+</table>
+   <hr>
+
+   <table class="table">
+      <h4>Todo List Item Entry</h4>
+      <tr>
+         <form class="form form-horizontal" method="POST" role="todo_form" action="{{ url_for('submit') }}">
+            {{ todo_form.hidden_tag() }}
+            {{ wtf.form_errors(todo_form, hiddens="only") }}
+            {{ wtf.form_field(todo_form.description) }}
+            {{ wtf.form_field(todo_form.email) }}
+            {{ wtf.form_field(todo_form.priority) }}
+            {{ wtf.form_field(todo_form.submit) }}
+         </form>
+      </tr>
+      <tr>
+         <form class="form form-horizontal" method="POST" role="clear_form" action="{{ url_for('clear') }}">
+            {{ clear_form.hidden_tag() }}
+            {{ wtf.form_errors(clear_form, hiddens="only") }}
+            <div class="form-actions">
+               <button name="action_clear" type="submit" class="btn btn-warning">Clear List</button>
+            </div>
+         </form>
+      </tr>
+      <tr>
+         <form class="form form-horizontal" method="POST" role="save_form" action="{{ url_for('save') }}">
+            {{ save_form.hidden_tag() }}
+            {{ wtf.form_errors(save_form, hiddens="only") }}
+            <div class="form-actions">
+               <button name="action_save" type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+         </form>
+      </tr>
+   </table>
+</div>
 {% endblock %}

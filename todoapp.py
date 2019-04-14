@@ -1,6 +1,6 @@
 """ Todo List web based app """
 import pickle
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, request
 from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField
@@ -49,6 +49,10 @@ class Task(object):
         self.description = text
         return self.description
 
+    def get_description(self):
+        """ Getter for description field """
+        return self.description
+
     def set_email(self, text):
         """ Setter for email field """
         self.email = text
@@ -80,10 +84,12 @@ class ToDoList(object):
         """ Reverts our list back to it's original, clear state """
         self.todolist = []
 
-    def delete_item(self, task):
+    def delete_item(self, description):
         """ Attempts to remove the object from the list, if it exists """
         try:
-            self.todolist.remove(task)
+            for task in self.todolist:
+                if task.get_description() == description:
+                    self.todolist.remove(task)
         except ValueError:
             print "Task not in list"
 
@@ -121,21 +127,19 @@ def index():
                            tasklist=tasklist.get_list())
 
 
+@app.route('/delete', methods=['POST'])
+def delete():
+    tasklist.delete_item(request.form.get('delete_task'))
+    tasklist.save_list()
+    return redirect(url_for('index'))
+
+
 @app.route('/save', methods=['POST'])
 def save():
     """ Save branch - gets the action from the save_form button, and
     performs the tasklist.save_list function"""
-    todo_form = ToDoForm()
-    clear_form = ClearForm()
-    save_form = SaveForm()
-    if save_form.validate_on_submit():
-        tasklist.save_list()
-        return redirect(url_for('index'))
-    return render_template('todo.html',
-                           todo_form=todo_form,
-                           clear_form=clear_form,
-                           save_form=save_form,
-                           tasklist=tasklist.get_list())
+    tasklist.save_list()
+    return redirect(url_for('index'))
 
 
 @app.route('/submit', methods=['POST'])
@@ -144,8 +148,6 @@ def submit():
     and, if validated, creates a task object with the form data
     and appends it to the tasklist """
     todo_form = ToDoForm()
-    clear_form = ClearForm()
-    save_form = SaveForm()
     if todo_form.validate_on_submit():
         tasklist.add_item(Task(todo_form.description.data,
                                todo_form.email.data,
@@ -153,8 +155,6 @@ def submit():
         return redirect(url_for('index'))
     return render_template('todo.html',
                            todo_form=todo_form,
-                           clear_form=clear_form,
-                           save_form=save_form,
                            tasklist=tasklist.get_list())
 
 
@@ -162,18 +162,9 @@ def submit():
 def clear():
     """ Clear branch - sets the action to the clear form button
     to clear all fields and reset the list to it's original state """
-    todo_form = ToDoForm()
-    clear_form = ClearForm()
-    save_form = SaveForm()
-    if clear_form.validate_on_submit():
-        tasklist.clear_list()
-        tasklist.save_list()
-        return redirect(url_for('index'))
-    return render_template('todo.html',
-                           todo_form=todo_form,
-                           clear_form=clear_form,
-                           save_form=save_form,
-                           tasklist=tasklist.get_list())
+    tasklist.clear_list()
+    tasklist.save_list()
+    return redirect(url_for('index'))
 
 
 @app.errorhandler(404)
